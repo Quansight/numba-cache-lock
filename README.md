@@ -16,11 +16,6 @@ numba-smartjit is available on PyPI and can be installed with the command below:
 pip install numba-smartjit
 ```
 
-## How to use it
-
-[howto.md](howto.md)
-
-
 # numba-locking-cache
 
 A Python package that monkey-patches Numba's caching mechanism to safely coordinate concurrent cache access using file locks.
@@ -53,7 +48,9 @@ pip install numba-locking-cache
 Just import the patch Numba in your application:
 
 ```python
-import numba_locking_cache  # triggers monkey patching
+import numba_locking_cache
+
+numba_locking_cache.patch_numba_cache()
 
 from numba import jit
 
@@ -61,3 +58,7 @@ from numba import jit
 def my_func(x):
     return x * 2
 ```
+
+By default, `patch_numba_cache` will hold a lock for 1 hour in the worst case.
+One can change this value by assigning the `lifetime=` keyword argument to a
+`timedelta` object.
