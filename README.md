@@ -15,7 +15,7 @@ Numba’s function-level caching (`@jit(cache=True)`) is not concurrency-safe by
 - Lock file is created next to the cache index file:
   `/path/to/cache/func.nbi.lock`
 - Lock behavior:
-  - Timeout to acquire: 60 seconds (configurable)
+  - Timeout to acquire: 60 minutes (configurable)
   - Lifetime: `None` (lock persists until released)
   - NFS-safe: relies on atomic file creation
 
