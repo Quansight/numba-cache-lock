@@ -1,23 +1,5 @@
 # numba-lock-cache
 
-## Intro
-
-numba-lock-cache monkey-patch the Numba caching mechanism
-smartjit `@jit` decorator adds extra customization of when code execution should fall back to the interpreter. It works as follow:
-
-1. For jitted functions with cache (overloads), use the jitted function if available, and interpreted code otherwise
-2. Add a **dispatching** logic, an optional function to pass to the jit decorator, which will decide wether to use jit or not.
-
-## Install
-
-numba-smartjit is available on PyPI and can be installed with the command below:
-
-```bash
-pip install numba-smartjit
-```
-
-# numba-locking-cache
-
 A Python package that monkey-patches Numba's caching mechanism to safely coordinate concurrent cache access using file locks.
 
 ## Why?
