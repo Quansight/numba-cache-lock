@@ -1,6 +1,6 @@
 [project]
 name = "numba-cache-lock"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "A caching system for Numba with file locking support"
 authors = [
     {name = "Guilherme Leobas"}
