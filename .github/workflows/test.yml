@@ -15,13 +15,21 @@ concurrency:
 jobs:
   lint:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-tests') }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.12']
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -39,15 +47,14 @@ jobs:
         run: poetry run mypy .
 
   test:
-    name:  ${{ matrix.os }} - Numba v${{matrix.numba-version}} - Python v${{ matrix.python-version }}
+    name:  ${{ matrix.os }} - Python v${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.12', '3.13']
-        numba-version: ['0.56']
+        python-version: ['3.11', '3.12']
 
     steps:
       - name: Checkout code
