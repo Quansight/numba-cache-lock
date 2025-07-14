@@ -1,4 +1,4 @@
-name: Numba-smartjit
+name: Numba-cache-lock
 
 on:
   # Trigger the workflow on push or pull request,
@@ -9,7 +9,7 @@ on:
 
 # kill any previous running job on a new commit
 concurrency:
-  group: build-and-test-smartjit-${{ github.head_ref }}
+  group: build-and-test-cache-lock-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
@@ -34,17 +34,13 @@ jobs:
   test:
     name:  ${{ matrix.os }} - Numba v${{matrix.numba-version}} - Python v${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 35
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ['3.12', '3.13']
         numba-version: ['0.56']
-        include:
-          - os: ubuntu-latest
-            python-version: '3.11'
-            numba-version: '0.57'
 
     needs: lint
 
@@ -59,6 +55,9 @@ jobs:
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install
 
       - name: Run tests
         shell: bash -l {0}
