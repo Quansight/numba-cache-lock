@@ -52,6 +52,6 @@ def patch_numba_cache(lifetime: timedelta = DEFAULT_LOCK_LIFETIME):
 try:
     from importlib.metadata import version
 except ImportError:
-    from importlib_metadata import version  # For Python <3.8
+    from importlib_metadata import version  # type: ignore[no-redef]
 
 __version__ = version("numba_cache_lock")
