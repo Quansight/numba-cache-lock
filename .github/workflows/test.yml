@@ -1,0 +1,66 @@
+name: Numba-smartjit
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  pull_request:
+    branches:
+      - main
+
+# kill any previous running job on a new commit
+concurrency:
+  group: build-and-test-smartjit-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-tests') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+
+      - name: Install flake8
+        run: |
+          pip install flake8
+
+      - name: Lint:flake8
+        run: |
+          flake8 .
+
+  test:
+    name:  ${{ matrix.os }} - Numba v${{matrix.numba-version}} - Python v${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.12', '3.13']
+        numba-version: ['0.56']
+        include:
+          - os: ubuntu-latest
+            python-version: '3.11'
+            numba-version: '0.57'
+
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          pytest -sv -r A tests/ -x

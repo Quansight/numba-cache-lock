@@ -47,3 +47,11 @@ def patch_numba_cache(lifetime: timedelta = DEFAULT_LOCK_LIFETIME):
         self._cache = FileLockFunctionCache(self.py_func, lifetime=lifetime)
 
     Dispatcher.enable_caching = enable_caching
+
+
+try:
+    from importlib.metadata import version
+except ImportError:
+    from importlib_metadata import version  # For Python <3.8
+
+__version__ = version("numba_cache_lock")
