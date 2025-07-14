@@ -23,13 +23,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
 
-      - name: Install flake8
-        run: |
-          pip install flake8
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
 
-      - name: Lint:flake8
-        run: |
-          flake8 .
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run black
+        run: poetry run black --check .
+
+      - name: Run ruff
+        run: poetry run ruff .
+
+      - name: Run mypy
+        run: poetry run mypy .
 
   test:
     name:  ${{ matrix.os }} - Numba v${{matrix.numba-version}} - Python v${{ matrix.python-version }}
@@ -55,9 +62,9 @@ jobs:
         uses: snok/install-poetry@v1
 
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --no-interaction
 
       - name: Run tests
         shell: bash -l {0}
         run: |
-          pytest -sv -r A tests/ -x
+          python tests/

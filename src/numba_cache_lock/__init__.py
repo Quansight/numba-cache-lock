@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from typing import Final, Optional
+from typing import Final
 
 from flufl.lock import Lock
 from numba.core.caching import FunctionCache
@@ -41,12 +41,12 @@ class FileLockFunctionCache(FunctionCache):
 
 
 def patch_numba_cache(lifetime: timedelta = DEFAULT_LOCK_LIFETIME):
-    Dispatcher = dispatcher_registry[target_registry["CPU"]]
+    dispatcher = dispatcher_registry[target_registry["CPU"]]
 
     def enable_caching(self):
         self._cache = FileLockFunctionCache(self.py_func, lifetime=lifetime)
 
-    Dispatcher.enable_caching = enable_caching
+    dispatcher.enable_caching = enable_caching
 
 
 try:
