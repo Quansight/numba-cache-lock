@@ -22,7 +22,7 @@ Numba’s function-level caching (`@jit(cache=True)`) is not concurrency-safe by
 ## Installation
 
 ```bash
-pip install numba-locking-cache
+pip install numba-lock-cache
 ```
 
 ## How to use it
@@ -30,9 +30,9 @@ pip install numba-locking-cache
 Just import the patch Numba in your application:
 
 ```python
-import numba_locking_cache
+import numba_cache_lock
 
-numba_locking_cache.patch_numba_cache()
+numba_cache_lock.patch_numba_cache()
 
 from numba import jit
 

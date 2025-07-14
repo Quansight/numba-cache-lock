@@ -10,7 +10,7 @@ from numba.core.target_extension import (
 )
 
 __all__ = [
-    "monkey_patch_caching",
+    "patch_numba_cache",
 ]
 
 
