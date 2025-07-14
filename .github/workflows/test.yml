@@ -1,0 +1,77 @@
+name: Numba-cache-lock
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  pull_request:
+    branches:
+      - main
+
+# kill any previous running job on a new commit
+concurrency:
+  group: build-and-test-cache-lock-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-tests') }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run black
+        run: poetry run black --check .
+
+      - name: Run ruff
+        run: poetry run ruff check .
+
+      - name: Run mypy
+        run: poetry run mypy .
+
+  test:
+    name:  ${{ matrix.os }} - Python v${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.11', '3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          poetry run python -m unittest discover -s tests
